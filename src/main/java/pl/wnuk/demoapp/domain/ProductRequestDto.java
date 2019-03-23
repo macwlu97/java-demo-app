@@ -1,6 +1,16 @@
 package pl.wnuk.demoapp.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ProductRequestDto {
+
+    private final String name;
+
+    @JsonCreator
+    public ProductRequestDto(@JsonProperty("name") String name){
+        this.name = name;
+    }
 
     public String getName() {
         return name;
@@ -13,13 +23,9 @@ public class ProductRequestDto {
                 '}';
     }
 
-    private final String name;
-
-    private ProductRequestDto(String name){
-        this.name = name;
-    }
 
     public boolean isValid(){
+        //true &&
         return name != null && !name.isBlank();
     }
 
