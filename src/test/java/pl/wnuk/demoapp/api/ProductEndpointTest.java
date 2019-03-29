@@ -36,7 +36,7 @@ public class ProductEndpointTest extends DemoappApplicationTests {
     }
 
     @Test
-    public void shouldGetNotExistingProudct(){
+    public void shouldReturnThatTheProductDoesNotExist(){
         //given
 
         ProductRequestDto requestDto = new ProductRequestDto("produkt");
@@ -47,8 +47,8 @@ public class ProductEndpointTest extends DemoappApplicationTests {
         ResponseEntity<ProductResponseDto> result = httpClient.getForEntity(url, ProductResponseDto.class);
 
         //then
-        assertThat(result.getStatusCodeValue()).isEqualTo(200);
-        assertThat(result.getBody()).isEqualToComparingFieldByField(existingProduct);
+        assertThat(result.getStatusCodeValue()).isEqualTo(404);
+//        assertThat(result.getBody()).isEqualToComparingFieldByField(existingProduct);
     }
 
     @Test
