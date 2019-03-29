@@ -36,6 +36,22 @@ public class ProductEndpointTest extends DemoappApplicationTests {
     }
 
     @Test
+    public void shouldGetNotExistingProudct(){
+        //given
+
+        ProductRequestDto requestDto = new ProductRequestDto("produkt");
+        ProductResponseDto existingProduct = productFacade.create(requestDto);
+
+        final String url = "http://localhost:" + port + "/products/" + existingProduct.getId();
+        //when
+        ResponseEntity<ProductResponseDto> result = httpClient.getForEntity(url, ProductResponseDto.class);
+
+        //then
+        assertThat(result.getStatusCodeValue()).isEqualTo(200);
+        assertThat(result.getBody()).isEqualToComparingFieldByField(existingProduct);
+    }
+
+    @Test
     public void shouldCreateProduct(){
         //given
         final String url = "http://localhost:" + port + "/products";
