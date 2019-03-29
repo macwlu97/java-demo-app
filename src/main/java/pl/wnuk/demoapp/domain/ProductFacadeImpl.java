@@ -14,6 +14,13 @@ public class ProductFacadeImpl implements ProductFacade {
 
     private final ProductRepository productRepository;
 
+
+    @Override
+    public ProductResponseDto findById(String id){
+        Product product = productRepository.findById(id);
+        return new ProductResponseDto(product.getId(), product.getName());
+    }
+
     @Override
     public ProductResponseDto create(ProductRequestDto productRequest) {
         //walidacja
@@ -25,6 +32,7 @@ public class ProductFacadeImpl implements ProductFacade {
         String id = UUID.randomUUID().toString();
         LocalDateTime createdAt = LocalDateTime.now();
         Product product = new Product(id, productRequest.getName(), createdAt);
+//        Product product = new Product(id, "iphone", createdAt);
 
         //zapis
         productRepository.save(product);
