@@ -22,14 +22,24 @@ class ProductEndpoint {
         this.productFacade = productFacade;
     }
 
+    @PostMapping
+    ProductResponseDto createProduct(@RequestBody ProductRequestDto productRequestDto){
+        return productFacade.create(productRequestDto);
+    }
+
     @GetMapping("/{id}")
     ProductResponseDto getProduct(@PathVariable("id") String id){
         return productFacade.findById(id);
     }
 
-    @PostMapping
-    ProductResponseDto createProduct(@RequestBody ProductRequestDto productRequestDto){
-        return productFacade.create(productRequestDto);
+    @PutMapping("/{id}")
+    ProductResponseDto updateProduct(@PathVariable String id, @RequestBody ProductRequestDto productRequestDto){
+        return  productFacade.update(id, productRequestDto);
+    }
+
+    @DeleteMapping("/{id}")
+    ProductResponseDto deleteProduct(@PathVariable String id){
+        return productFacade.delete(id);
     }
 
 }

@@ -2,14 +2,17 @@ package pl.wnuk.demoapp.domain;
 
 public interface ProductFacade {
 
-    //get
-//    ProductResponseDto get(String id);
-    //create
+    //CRUD
 
+    //Create
     ProductResponseDto create(ProductRequestDto productRequest);
 
+    //Read
     ProductResponseDto findById(String id);
 
-    //update
-    //delete
+    //Update
+    ProductResponseDto update(String id, ProductRequestDto productRequestDto);
+
+    //Delete
+    ProductResponseDto delete(String id);
 }
