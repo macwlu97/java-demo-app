@@ -1,5 +1,7 @@
 package pl.wnuk.demoapp.domain;
 
+import org.springframework.http.ResponseEntity;
+
 public interface ProductFacade {
 
     //CRUD
@@ -8,11 +10,11 @@ public interface ProductFacade {
     ProductResponseDto create(ProductRequestDto productRequest);
 
     //Read
-    ProductResponseDto findById(String id);
+    ProductResponseDto read(String id);
 
     //Update
     ProductResponseDto update(String id, ProductRequestDto productRequestDto);
 
     //Delete
-    ProductResponseDto delete(String id);
+    ResponseEntity delete(String id);
 }

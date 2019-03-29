@@ -24,6 +24,6 @@ public abstract class DemoappApplicationTests {
 
 	@Autowired
 	protected ObjectMapper objectMapper;
-	}
+
 
 }

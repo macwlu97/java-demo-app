@@ -6,11 +6,14 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import pl.wnuk.demoapp.DemoappApplicationTests;
 import pl.wnuk.demoapp.domain.ProductFacade;
 import pl.wnuk.demoapp.domain.ProductRequestDto;
 import pl.wnuk.demoapp.domain.ProductResponseDto;
+
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -38,17 +41,11 @@ public class ProductEndpointTest extends DemoappApplicationTests {
     @Test
     public void shouldReturnThatTheProductDoesNotExist(){
         //given
-
-        ProductRequestDto requestDto = new ProductRequestDto("produkt");
-        ProductResponseDto existingProduct = productFacade.create(requestDto);
-
-        final String url = "http://localhost:" + port + "/products/" + existingProduct.getId();
+        final String url = "http://localhost:" + port + "/products/" + UUID.randomUUID().toString();
         //when
         ResponseEntity<ProductResponseDto> result = httpClient.getForEntity(url, ProductResponseDto.class);
-
         //then
         assertThat(result.getStatusCodeValue()).isEqualTo(404);
-//        assertThat(result.getBody()).isEqualToComparingFieldByField(existingProduct);
     }
 
     @Test
@@ -65,6 +62,48 @@ public class ProductEndpointTest extends DemoappApplicationTests {
         assertThat(result.getStatusCodeValue()).isEqualTo(200);
         assertThat(result.getBody().getName()).isEqualTo("iphone");
     }
+
+    @Test
+    public void shouldUpdateProduct(){
+
+        //given
+        ProductRequestDto requestDto = new ProductRequestDto("produkt");
+        ProductResponseDto existingProduct = productFacade.create(requestDto);
+
+        final String url = "http://localhost:"+ port + "/products/" + existingProduct.getId();
+
+        ProductRequestDto updatedProduct = new ProductRequestDto("updated product");
+
+        String productJson = mapToJson(updatedProduct);
+
+        //when
+        ResponseEntity<ProductResponseDto> result = httpClient.exchange(url,
+                HttpMethod.PUT,
+                getHttpRequest(productJson),
+                ProductResponseDto.class);
+
+        //then
+        assertThat(result.getStatusCodeValue()).isEqualTo(200);
+        assertThat(result.getBody().getId()).isEqualTo(existingProduct.getId());
+        assertThat(result.getBody().getName()).isEqualTo(updatedProduct.getName());
+    }
+
+    @Test
+    public void shouldDeleteProduct(){
+        //given
+
+        ProductRequestDto requestDto = new ProductRequestDto("produkt");
+        ProductResponseDto existingProduct = productFacade.create(requestDto);
+
+        final String url = "http://localhost:" + port + "/products/" + existingProduct.getId();
+
+        //when
+        ResponseEntity<ProductResponseDto> result = httpClient
+                .exchange(url, HttpMethod.DELETE, null, ProductResponseDto.class);
+
+        assertThat(result.getStatusCodeValue()).isEqualTo(204);
+    }
+
 
     String mapToJson (ProductRequestDto product){
         try {

@@ -1,5 +1,7 @@
 package pl.wnuk.demoapp.domain;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import pl.wnuk.demoapp.infrastructure.ProductRepository;
 
@@ -36,8 +38,8 @@ public class ProductFacadeImpl implements ProductFacade {
     }
 
     @Override
-    public ProductResponseDto findById(String id){
-        Product product = productRepository.findById(id);
+    public ProductResponseDto read(String id){
+        Product product = productRepository.read(id);
         return new ProductResponseDto(product.getId(), product.getName());
     }
 
@@ -47,17 +49,17 @@ public class ProductFacadeImpl implements ProductFacade {
             throw new RuntimeException("Product name cannot be empty!");
         }
 
-        Product product = productRepository.findById(id);
+        Product product = productRepository.read(id);
         Product updatedProduct = productRepository.update(product, productRequest.getName());
 
         return new ProductResponseDto(updatedProduct.getId(), updatedProduct.getName());
     }
 
     @Override
-    public ProductResponseDto delete(String id) {
-        Product product = productRepository.findById(id);
+    public ResponseEntity delete(String id) {
+        Product product = productRepository.read(id);
         productRepository.delete(id);
-        return new ProductResponseDto(product.getId(), product.getName());
+        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
 
