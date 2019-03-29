@@ -2,6 +2,7 @@ package pl.wnuk.demoapp.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.wnuk.demoapp.domain.Product;
 import pl.wnuk.demoapp.domain.ProductFacade;
@@ -29,7 +30,7 @@ class ProductEndpoint {
 
     @GetMapping("/{id}")
     ProductResponseDto getProduct(@PathVariable("id") String id){
-        return productFacade.findById(id);
+        return productFacade.read(id);
     }
 
     @PutMapping("/{id}")
@@ -38,7 +39,7 @@ class ProductEndpoint {
     }
 
     @DeleteMapping("/{id}")
-    ProductResponseDto deleteProduct(@PathVariable String id){
+    ResponseEntity deleteProduct(@PathVariable String id){
         return productFacade.delete(id);
     }
 

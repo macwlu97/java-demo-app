@@ -19,7 +19,7 @@ public class inMemoryProductRepository implements ProductRepository {
     }
 
     @Override
-    public Product findById(String id) {
+    public Product read(String id) {
         if(!products.containsKey(id)) throw new ProductNotFoundException("Nie znaleziono produktu!");
         return products.get(id);
     }

@@ -6,7 +6,7 @@ public interface ProductRepository {
 
     void save(Product product);
 
-    Product findById(String id);
+    Product read(String id);
 
     Product update(Product product, String name);
 
