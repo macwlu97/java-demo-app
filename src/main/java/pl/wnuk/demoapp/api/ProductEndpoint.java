@@ -39,7 +39,7 @@ class ProductEndpoint {
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity deleteProduct(@PathVariable String id){
+    ResponseEntity<Void> deleteProduct(@PathVariable String id){
         return productFacade.delete(id);
     }
 
