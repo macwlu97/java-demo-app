@@ -2,6 +2,7 @@ package pl.wnuk.demoapp.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.assertj.core.api.Assertions;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -22,51 +23,54 @@ public class ProductEndpointTest extends DemoappApplicationTests {
     @Autowired
     ProductFacade productFacade;
 
+    private String productsUrl;
+
+    @Before
+    public void init() {
+        productsUrl = "http://localhost:" + port + "/products/";
+    }
+
     @Test
     public void shouldGetExistingProudct(){
-        //given
 
         ProductRequestDto requestDto = new ProductRequestDto("produkt");
         ProductResponseDto existingProduct = productFacade.create(requestDto);
 
-        final String url = "http://localhost:" + port + "/products/" + existingProduct.getId();
-        //when
+        final String url = productsUrl + existingProduct.getId();
+
         ResponseEntity<ProductResponseDto> result = httpClient.getForEntity(url, ProductResponseDto.class);
 
-        //then
         assertThat(result.getStatusCodeValue()).isEqualTo(200);
         assertThat(result.getBody()).isEqualToComparingFieldByField(existingProduct);
     }
 
     @Test
     public void shouldReturnThatTheProductDoesNotExist(){
-        //given
-        final String url = "http://localhost:" + port + "/products/" + UUID.randomUUID().toString();
-        //when
+
+        final String url = productsUrl + "notExistProduct";
+
         ResponseEntity<ProductResponseDto> result = httpClient.getForEntity(url, ProductResponseDto.class);
-        //then
+
         assertThat(result.getStatusCodeValue()).isEqualTo(404);
     }
 
     @Test
     public void shouldCreateProduct(){
-        //given
-        final String url = "http://localhost:" + port + "/products";
+
         final ProductRequestDto product = new ProductRequestDto("iphone");
         String productJson = mapToJson(product);
 
-        //when
-        ResponseEntity<ProductResponseDto> result = httpClient.postForEntity(url,
+        ResponseEntity<ProductResponseDto> result = httpClient.postForEntity(productsUrl,
                getHttpRequest(productJson), ProductResponseDto.class);
-        //then
+
         assertThat(result.getStatusCodeValue()).isEqualTo(200);
         assertThat(result.getBody().getName()).isEqualTo("iphone");
+
     }
 
     @Test
     public void shouldUpdateProduct(){
 
-        //given
         ProductRequestDto requestDto = new ProductRequestDto("produkt");
         ProductResponseDto existingProduct = productFacade.create(requestDto);
 
@@ -76,13 +80,11 @@ public class ProductEndpointTest extends DemoappApplicationTests {
 
         String productJson = mapToJson(updatedProduct);
 
-        //when
         ResponseEntity<ProductResponseDto> result = httpClient.exchange(url,
                 HttpMethod.PUT,
                 getHttpRequest(productJson),
                 ProductResponseDto.class);
 
-        //then
         assertThat(result.getStatusCodeValue()).isEqualTo(200);
         assertThat(result.getBody().getId()).isEqualTo(existingProduct.getId());
         assertThat(result.getBody().getName()).isEqualTo(updatedProduct.getName());
@@ -90,16 +92,14 @@ public class ProductEndpointTest extends DemoappApplicationTests {
 
     @Test
     public void shouldDeleteProduct(){
-        //given
 
         ProductRequestDto requestDto = new ProductRequestDto("produkt");
         ProductResponseDto existingProduct = productFacade.create(requestDto);
 
-        final String url = "http://localhost:" + port + "/products/" + existingProduct.getId();
+        final String url = productsUrl + existingProduct.getId();
 
-        //when
-        ResponseEntity<ProductResponseDto> result = httpClient
-                .exchange(url, HttpMethod.DELETE, null, ProductResponseDto.class);
+        ResponseEntity<Void> result = httpClient
+                .exchange(url, HttpMethod.DELETE, HttpEntity.EMPTY, Void.class);
 
         assertThat(result.getStatusCodeValue()).isEqualTo(204);
     }
@@ -109,7 +109,6 @@ public class ProductEndpointTest extends DemoappApplicationTests {
         try {
             return objectMapper.writeValueAsString(product);
         } catch (JsonProcessingException e) {
-//            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
