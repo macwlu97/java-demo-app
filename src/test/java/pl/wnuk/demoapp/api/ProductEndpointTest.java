@@ -74,7 +74,7 @@ public class ProductEndpointTest extends DemoappApplicationTests {
         ProductRequestDto requestDto = new ProductRequestDto("produkt");
         ProductResponseDto existingProduct = productFacade.create(requestDto);
 
-        final String url = "http://localhost:"+ port + "/products/" + existingProduct.getId();
+        final String url = productsUrl + existingProduct.getId();
 
         ProductRequestDto updatedProduct = new ProductRequestDto("updated product");
 
