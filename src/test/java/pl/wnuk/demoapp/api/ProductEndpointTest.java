@@ -9,15 +9,18 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 import pl.wnuk.demoapp.DemoappApplicationTests;
 import pl.wnuk.demoapp.domain.ProductFacade;
 import pl.wnuk.demoapp.domain.ProductRequestDto;
 import pl.wnuk.demoapp.domain.ProductResponseDto;
+import pl.wnuk.demoapp.domain.ProductsResponseDto;
 
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ProductEndpointTest extends DemoappApplicationTests {
 
     @Autowired
@@ -31,7 +34,7 @@ public class ProductEndpointTest extends DemoappApplicationTests {
     }
 
     @Test
-    public void shouldGetExistingProudct(){
+    public void shouldGetExistingProduct(){
 
         ProductRequestDto requestDto = new ProductRequestDto("produkt");
         ProductResponseDto existingProduct = productFacade.create(requestDto);
@@ -42,6 +45,26 @@ public class ProductEndpointTest extends DemoappApplicationTests {
 
         assertThat(result.getStatusCodeValue()).isEqualTo(200);
         assertThat(result.getBody()).isEqualToComparingFieldByField(existingProduct);
+    }
+
+    @Test
+    public void shouldGetExistingProducts(){
+
+        ProductRequestDto requestDtoA = new ProductRequestDto("produkt");
+        ProductRequestDto requestDtoB = new ProductRequestDto("produkt2");
+
+        ProductResponseDto existingProductA = productFacade.create(requestDtoA);
+        ProductResponseDto existingProductB = productFacade.create(requestDtoB);
+
+        ResponseEntity<ProductsResponseDto> result = httpClient.getForEntity(productsUrl, ProductsResponseDto.class);
+
+        ProductsResponseDto productsResponseDto = result.getBody();
+
+        assertThat(result.getStatusCodeValue()).isEqualTo(200);
+        assertThat(productsResponseDto.getProducts().size()).isEqualTo(2);
+
+        assertThat(productsResponseDto.getProducts().get(0)).isEqualToComparingFieldByFieldRecursively(existingProductA);
+        assertThat(productsResponseDto.getProducts().get(1)).isEqualToComparingFieldByFieldRecursively(existingProductB);
     }
 
     @Test

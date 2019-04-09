@@ -4,12 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.wnuk.demoapp.domain.Product;
-import pl.wnuk.demoapp.domain.ProductFacade;
-import pl.wnuk.demoapp.domain.ProductRequestDto;
-import pl.wnuk.demoapp.domain.ProductResponseDto;
+import pl.wnuk.demoapp.domain.*;
 import pl.wnuk.demoapp.infrastructure.ProductRepository;
 
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -31,6 +30,11 @@ class ProductEndpoint {
     @GetMapping("/{id}")
     ProductResponseDto getProduct(@PathVariable("id") String id){
         return productFacade.read(id);
+    }
+
+    @GetMapping
+    ProductsResponseDto getProductsList(){
+        return productFacade.readList();
     }
 
     @PutMapping("/{id}")
