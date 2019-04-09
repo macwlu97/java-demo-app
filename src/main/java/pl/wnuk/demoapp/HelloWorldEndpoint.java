@@ -7,9 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HelloWorldEndpoint {
 
-        // localhost:8080:/hello
-        // Hello World!
-
         @RequestMapping(method = RequestMethod.GET, path = "/hello")
         String hello() {
             return "Hello heroku  World!";

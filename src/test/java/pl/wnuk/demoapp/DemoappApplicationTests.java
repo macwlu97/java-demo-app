@@ -1,5 +1,6 @@
 package pl.wnuk.demoapp;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.coyote.Response;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -13,27 +14,16 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment =  SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class DemoappApplicationTests {
+public abstract class DemoappApplicationTests {
 
 	@Autowired
-	TestRestTemplate httpClient;
+	protected TestRestTemplate httpClient;
 
 	@LocalServerPort
-	int port;
+	protected int port;
 
-	@Test
-	public void shouldReturnGreetings() {
-		final String url = "http://localhost:" + port + "/hello";
+	@Autowired
+	protected ObjectMapper objectMapper;
 
-		// when
-		httpClient.getForEntity(url, String.class);
-		ResponseEntity<String> response = httpClient.getForEntity(url, String.class);
-		// wykonać request http na localhost:8080/hello
-
-		// then
-		Assertions.assertThat(response.getStatusCodeValue()).isEqualTo(200);
-		Assertions.assertThat(response.getBody()).isEqualTo("Hello heroku World!");
-		// odpowiedz bedzie zawierala napis "hello world" i kod 200
-	}
 
 }
