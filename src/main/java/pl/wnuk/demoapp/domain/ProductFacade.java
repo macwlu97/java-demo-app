@@ -2,9 +2,6 @@ package pl.wnuk.demoapp.domain;
 
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
-import java.util.Map;
-
 public interface ProductFacade {
 
     ProductResponseDto create(ProductRequestDto productRequest);
