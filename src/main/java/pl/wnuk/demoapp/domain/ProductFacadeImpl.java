@@ -6,7 +6,8 @@ import org.springframework.stereotype.Component;
 import pl.wnuk.demoapp.infrastructure.ProductRepository;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 class ProductFacadeImpl implements ProductFacade {
@@ -44,6 +45,15 @@ class ProductFacadeImpl implements ProductFacade {
     public ProductResponseDto read(String id){
         Product product = productRepository.read(id);
         return new ProductResponseDto(product.getId(), product.getName());
+    }
+
+    @Override
+    public ProductsResponseDto readList() {
+        List<Product> products = productRepository.readList();
+        List<ProductResponseDto> productsResponse = products.stream()
+                .map(ProductResponseDto::new)
+                .collect(Collectors.toList());
+        return new ProductsResponseDto(productsResponse);
     }
 
     @Override

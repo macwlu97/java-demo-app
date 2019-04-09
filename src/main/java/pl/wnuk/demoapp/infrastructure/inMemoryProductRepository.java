@@ -5,8 +5,12 @@ import org.springframework.stereotype.Repository;
 import pl.wnuk.demoapp.domain.Product;
 import pl.wnuk.demoapp.domain.ProductNotFoundException;
 
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
 
 @Repository
 public class inMemoryProductRepository implements ProductRepository {
@@ -22,6 +26,14 @@ public class inMemoryProductRepository implements ProductRepository {
     public Product read(String id) {
         if(!products.containsKey(id)) throw new ProductNotFoundException("Nie znaleziono produktu!");
         return products.get(id);
+    }
+
+    @Override
+    public List<Product> readList() {
+        return products.values()
+                .stream()
+                .sorted(Comparator.comparing(Product::getCreatedAt))
+                .collect(toList());
     }
 
     @Override
