@@ -1,10 +1,9 @@
 package pl.wnuk.demoapp.infrastructure;
 
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import pl.wnuk.demoapp.domain.Price;
 import pl.wnuk.demoapp.domain.Product;
-import pl.wnuk.demoapp.domain.ProductNotFoundException;
+import pl.wnuk.demoapp.exceptions.ProductNotFoundException;
 
 import java.math.BigDecimal;
 import java.util.*;
