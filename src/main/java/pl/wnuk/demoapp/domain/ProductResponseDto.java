@@ -10,22 +10,25 @@ public class ProductResponseDto {
 
     private final String id;
     private final String name;
+    private final PriceDto price;
 
     @JsonCreator
     public ProductResponseDto(@JsonProperty("id") String id,
-                              @JsonProperty("name") String name) {
+                              @JsonProperty("name") String name,
+                              @JsonProperty("price") PriceDto price) {
         this.id = id;
         this.name = name;
-    }
-
-    public ProductResponseDto(Product product) {
-        this.id = product.getId();
-        this.name = product.getName();
+        this.price = price;
     }
 
     public String getId() {
         return id;
     }
+
+    public PriceDto getPrice() {
+        return price;
+    }
+
 
     public String getName() {
         return name;
@@ -45,12 +48,13 @@ public class ProductResponseDto {
         if (o == null || getClass() != o.getClass()) return false;
         ProductResponseDto that = (ProductResponseDto) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(name, that.name);
+                Objects.equals(name, that.name) &&
+                Objects.equals(price, that.price);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id, name);
-    }
+        public int hashCode() {
+            return Objects.hash(id, name, price);
+        }
 
 }

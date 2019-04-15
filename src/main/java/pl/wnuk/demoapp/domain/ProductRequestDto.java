@@ -9,28 +9,38 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ProductRequestDto {
 
     private final String name;
+    private final PriceDto price;
     //json
     @JsonCreator
-    public ProductRequestDto(@JsonProperty("name") String name){
+    public ProductRequestDto(@JsonProperty("name") String name,
+                             @JsonProperty("price") PriceDto price) {
         this.name = name;
+        this.price = price;
     }
 
     public String getName() {
         return name;
     }
 
+    public PriceDto getPrice() {
+        return price;
+    }
+
+    public boolean isValidToCreate(){
+        return name != null && !name.equals("") && price != null
+                && !price.getAmount().equals("") && !price.getCurrency().equals("");
+    }
+
+    public boolean isValidToUpdate(){
+        return (name != null && !name.equals("")) || (price != null
+                && !price.getAmount().equals("") && !price.getCurrency().equals(""));
+    }
+
     @Override
     public String toString() {
         return "ProductRequestDto{" +
                 "name='" + name + '\'' +
+                ", price='" + price + '\'' +
                 '}';
     }
-
-
-    public boolean isValid(){
-        //true &&
-        return name != null && !name.isBlank();
-    }
-
-
 }

@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import pl.wnuk.demoapp.infrastructure.ProductRepository;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,51 +23,55 @@ class ProductFacadeImpl implements ProductFacade {
 
     @Override
     public ProductResponseDto create(ProductRequestDto productRequest) {
-
-        if (!productRequest.isValid()){
-            throw new RuntimeException("Product name cannot be empty!");
+        if(!productRequest.isValidToCreate()){
+            throw new RuntimeException("Product can not be empty!");
         }
-
-
         String id = UUID.randomUUID().toString();
         LocalDateTime createdAt = LocalDateTime.now();
-        Product product = new Product(id, productRequest.getName(), createdAt);
-
-
+        Price price = new Price(new BigDecimal(productRequest.getPrice().getAmount()),
+                Currency.getInstance(productRequest.getPrice().getCurrency()));
+        Product product = new Product(id, productRequest.getName(), price, createdAt);
         productRepository.save(product);
-
-        return new ProductResponseDto(
-                product.getId(),
-                product.getName()
-        );
+        return new ProductResponseDto(product.getId(), product.getName(), new PriceDto(price));
     }
 
     @Override
     public ProductResponseDto read(String id){
         Product product = productRepository.read(id);
-        return new ProductResponseDto(product.getId(), product.getName());
+        PriceDto priceDto = new PriceDto(product.getPrice().getAmount().toString(),
+                product.getPrice().getCurrency().getCurrencyCode());
+        return new ProductResponseDto(product.getId(), product.getName(), priceDto);
     }
 
     @Override
     public ProductsResponseDto readList() {
-        List<Product> products = productRepository.readList();
-        List<ProductResponseDto> productsResponse = products.stream()
-                .map(ProductResponseDto::new)
-                .collect(Collectors.toList());
-        return new ProductsResponseDto(productsResponse);
+        List<Product> allProducts = productRepository.readList();
+        List<ProductResponseDto> response = allProducts.stream().map(product -> new ProductResponseDto(product.getId(),
+                product.getName(), new PriceDto(product.getPrice())))
+                .sorted(Comparator.comparing(ProductResponseDto::getId)).collect(Collectors.toList());
+
+        return new ProductsResponseDto(response);
     }
 
     @Override
-    public ProductResponseDto update(String id, ProductRequestDto productRequest) {
-        if (!productRequest.isValid()){
-            throw new RuntimeException("Product name cannot be empty!");
+    public ProductResponseDto update(String id, ProductRequestDto productRequestDto) {
+        if(!productRequestDto.isValidToUpdate()){
+            throw new RuntimeException("At least one of fields (name, price) has to be filled");
         }
-
         Product product = productRepository.read(id);
-        Product updatedProduct = productRepository.update(product, productRequest.getName());
-
-        return new ProductResponseDto(updatedProduct.getId(), updatedProduct.getName());
+        Product updatedProduct;
+        if(productRequestDto.getName() != null && productRequestDto.getPrice() != null){
+            updatedProduct = productRepository.update(product, productRequestDto.getName(),
+                    productRequestDto.getPrice().getAmount(), productRequestDto.getPrice().getCurrency());
+        }else if(productRequestDto.getName() != null){
+            updatedProduct = productRepository.update(product, productRequestDto.getName());
+        }else {
+            updatedProduct = productRepository.update(product, productRequestDto.getPrice().getAmount(),
+                    productRequestDto.getPrice().getCurrency());
+        }
+        return new ProductResponseDto(updatedProduct.getId(), updatedProduct.getName(), new PriceDto(updatedProduct.getPrice()));
     }
+
 
     @Override
     public ResponseEntity<Void> delete(String id) {

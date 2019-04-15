@@ -2,13 +2,12 @@ package pl.wnuk.demoapp.infrastructure;
 
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+import pl.wnuk.demoapp.domain.Price;
 import pl.wnuk.demoapp.domain.Product;
 import pl.wnuk.demoapp.domain.ProductNotFoundException;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -38,9 +37,35 @@ public class inMemoryProductRepository implements ProductRepository {
 
     @Override
     public Product update(Product product, String name) {
-        if(!products.containsKey(product.getId())) throw new ProductNotFoundException("Aktualizacja danych się nie powiodła, nie znaleziono produktu!");
-        products.put(product.getId(), new Product(product.getId(), name, product.getCreatedAt()));
-        return products.get(product.getId());
+        if(products.containsKey(product.getId())){
+            Product newProduct = new Product(product.getId(), name, product.getPrice(), product.getCreatedAt());
+            products.replace(product.getId(), newProduct);
+            return newProduct;
+        }else{
+            throw new ProductNotFoundException("Nie można zaaktualizować produktu!");
+        }
+    }
+
+    public Product update(Product product, String amount, String currency) {
+        if(products.containsKey(product.getId())){
+            Price newPrice = new Price(new BigDecimal(amount), Currency.getInstance(currency));
+            Product newProduct = new Product(product.getId(), product.getName(), newPrice, product.getCreatedAt());
+            products.replace(product.getId(), newProduct);
+            return newProduct;
+        }else{
+            throw new ProductNotFoundException("Nie można zaaktualizować produktu!");
+        }
+    }
+
+    public Product update(Product product, String name, String amount, String currency) {
+        if(products.containsKey(product.getId())){
+            Price newPrice = new Price(new BigDecimal(amount), Currency.getInstance(currency));
+            Product newProduct = new Product(product.getId(), name, newPrice, product.getCreatedAt());
+            products.replace(product.getId(), newProduct);
+            return newProduct;
+        }else{
+            throw new ProductNotFoundException("Nie można zaaktualizować produktu!");
+        }
     }
 
     @Override

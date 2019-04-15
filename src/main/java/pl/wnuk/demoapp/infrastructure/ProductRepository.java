@@ -14,6 +14,8 @@ public interface ProductRepository {
     List<Product> readList();
 
     Product update(Product product, String name);
+    Product update(Product product, String amount, String currency);
+    Product update(Product product, String name, String amount, String currency);
 
     void delete(String id);
 }
