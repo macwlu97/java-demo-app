@@ -11,10 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import pl.wnuk.demoapp.DemoappApplicationTests;
-import pl.wnuk.demoapp.domain.ProductFacade;
-import pl.wnuk.demoapp.domain.ProductRequestDto;
-import pl.wnuk.demoapp.domain.ProductResponseDto;
-import pl.wnuk.demoapp.domain.ProductsResponseDto;
+import pl.wnuk.demoapp.domain.*;
 
 import java.util.UUID;
 
@@ -36,7 +33,7 @@ public class ProductEndpointTest extends DemoappApplicationTests {
     @Test
     public void shouldGetExistingProduct(){
 
-        ProductRequestDto requestDto = new ProductRequestDto("produkt");
+        ProductRequestDto requestDto = new ProductRequestDto("product", new PriceDto("100", "PLN"));
         ProductResponseDto existingProduct = productFacade.create(requestDto);
 
         final String url = productsUrl + existingProduct.getId();
@@ -50,8 +47,8 @@ public class ProductEndpointTest extends DemoappApplicationTests {
     @Test
     public void shouldGetExistingProducts(){
 
-        ProductRequestDto requestDtoA = new ProductRequestDto("produkt");
-        ProductRequestDto requestDtoB = new ProductRequestDto("produkt2");
+        ProductRequestDto requestDtoA = new ProductRequestDto("product1", new PriceDto("100", "PLN"));
+        ProductRequestDto requestDtoB = new ProductRequestDto("product2", new PriceDto("150", "EUR"));
 
         ProductResponseDto existingProductA = productFacade.create(requestDtoA);
         ProductResponseDto existingProductB = productFacade.create(requestDtoB);
@@ -80,7 +77,7 @@ public class ProductEndpointTest extends DemoappApplicationTests {
     @Test
     public void shouldCreateProduct(){
 
-        final ProductRequestDto product = new ProductRequestDto("iphone");
+        final ProductRequestDto product = new ProductRequestDto("iphone", new PriceDto("100", "PLN"));
         String productJson = mapToJson(product);
 
         ResponseEntity<ProductResponseDto> result = httpClient.postForEntity(productsUrl,
@@ -94,12 +91,12 @@ public class ProductEndpointTest extends DemoappApplicationTests {
     @Test
     public void shouldUpdateProduct(){
 
-        ProductRequestDto requestDto = new ProductRequestDto("produkt");
+        ProductRequestDto requestDto = new ProductRequestDto("product", new PriceDto("100", "PLN"));
         ProductResponseDto existingProduct = productFacade.create(requestDto);
 
         final String url = productsUrl + existingProduct.getId();
 
-        ProductRequestDto updatedProduct = new ProductRequestDto("updated product");
+        ProductRequestDto updatedProduct = new ProductRequestDto("product2", new PriceDto("100", "PLN"));
 
         String productJson = mapToJson(updatedProduct);
 
@@ -116,7 +113,7 @@ public class ProductEndpointTest extends DemoappApplicationTests {
     @Test
     public void shouldDeleteProduct(){
 
-        ProductRequestDto requestDto = new ProductRequestDto("produkt");
+        ProductRequestDto requestDto = new ProductRequestDto("product", new PriceDto("100", "PLN"));
         ProductResponseDto existingProduct = productFacade.create(requestDto);
 
         final String url = productsUrl + existingProduct.getId();
